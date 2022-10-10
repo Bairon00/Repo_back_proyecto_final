@@ -59,7 +59,7 @@ def one_usuario(usuario_id):
 
 @app.route("/medico/<int:medico_id>",methods=["GET"])
 def one_medico(medico_id):
-    one=Medicos.query.get(usuario_id)
+    one=Medicos.query.get(medico_id)
     return jsonify(one.serialize())
 
 
