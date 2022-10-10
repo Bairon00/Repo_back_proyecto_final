@@ -52,15 +52,17 @@ def all_user():
     for users in all_user:
         users_serialized.append(users.serialize())
     return jsonify(users_serialized)
-@app.route("/usuario/<int:usuario_id>")
-def one_usuario(usuaruio_id):
+@app.route("/usuario/<int:usuario_id>",methods=["GET"])
+def one_usuario(usuario_id):
     one=User.query.get(usuario_id)
     return jsonify(one.serialize())
 
-@app.route("/medico/<int:medico_id>")
+@app.route("/medico/<int:medico_id>",methods=["GET"])
 def one_medico(medico_id):
     one=Medicos.query.get(usuario_id)
     return jsonify(one.serialize())
+
+
 
 
 
