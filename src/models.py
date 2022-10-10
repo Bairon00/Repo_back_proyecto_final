@@ -25,7 +25,7 @@ class Medicos(db.Model):
     rut= db.Column(db.String(11), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    prevision = db.Column(db.String(30), unique=False, nullable=False)
+    prevision_doc = db.Column(db.String(30), unique=False, nullable=False)
     especialidad = db.Column(db.String(30), unique=False, nullable=False)
     valorconsulta = db.Column(db.String(6), unique=False, nullable=False)
     
@@ -35,6 +35,7 @@ class Medicos(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "personajes": self.personajes,
-            "genero": self.genero,
+            "prevision_doc": self.prevision_doc,
+            "especialidad": self.especialidad,
+            "valorconsulta": self.valorconsulta,
         }
