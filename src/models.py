@@ -4,38 +4,50 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.String(30),nullable=False)
+    last_name=db.Column(db.String(30),nullable=False)
+    rut_user=db.Column(db.String(8), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    rut= db.Column(db.String(11), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    prevision = db.Column(db.String(30), unique=False, nullable=False)
-
+    password =db.Column(db.String(80), unique=False, nullable=False)
+    is_active =db.Column(db.Boolean(), unique=False, nullable=False)
+    prevision_user=db.Column(db.String(30),unique=False,nullable=False)
     def __repr__(self):
-        return '<User %r>' % self.email
+        return '<User %r>' % self.username
 
     def serialize(self):
         return {
+            "name":self.name,
+            "last_name":self.last_name,
             "id": self.id,
             "email": self.email,
+            "prevision_user": self.prevision_user,
+            # do not serialize the password, its a security breach
         }
-
-class Medicos(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    rut= db.Column(db.String(11), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    prevision_doc = db.Column(db.String(30), unique=False, nullable=False)
-    especialidad = db.Column(db.String(30), unique=False, nullable=False)
-    valorconsulta = db.Column(db.String(6), unique=False, nullable=False)
-    
+class Especialidades():
+    id=db.Column(db.Integer,primary_key=True)
+    especialidad=db.Column(db.String(100),unique=False,nullable=False)
     def __repr__(self):
-        return '<Medicos %r>' % self.medicos
-
+        return '<User %r>' % self.especialidades
     def serialize(self):
         return {
-            "id": self.id,
-            "prevision_doc": self.prevision_doc,
-            "especialidad": self.especialidad,
-            "valorconsulta": self.valorconsulta,
+            "id":self.id,
+            "especialidad":self.especialidad
+          
+        }
+class Medicos(db.Model):
+    id=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String(50),unique=False,nullable=False)
+    rut_doc=db.Column(db.String(8), unique=True, nullable=False)
+    email=db.Column(db.String(100),unique=True,nullable=False)
+    valor=db.Column(db.String(30),nullable=False)
+    prevision_doc=db.Column(db.String(30), unique=False, nullable=False)
+    imagen=db.Column(db.String(250),nullable=False)
+
+   
+    def __repr__(self):
+        return '<User %r>' % self.medicosname
+    def serialize(self):
+        return {
+            "name":self.name,
+            "valor":self.valor
         }

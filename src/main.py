@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Medicos
+from models import db, User,Medicos
 #from models import Person
 
 app = Flask(__name__)
@@ -32,15 +32,50 @@ def sitemap():
 
 @app.route('/user', methods=['GET'])
 def handle_hello():
-    all_user=User.query.all()
-    serializados=list(map(lambda user: user.serialize(),all_user))
-    return jsonify(serializados), 200
 
-@app.route("/especialidades", methods=['GET'])
-def get_especialidades():
+    response_body = {
+        "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+@app.route('/medicos',methods=["GET"])
+def all_medicos():
     all_medicos=Medicos.query.all()
-    all_especialidades=list(map(lambda especialidades:especialidad.serialize(), all_medicos))
-    return jsonify(all_especialidades), 200
+    medicos_serialized=[]
+    for medicos in all_medicos:
+        medicos_serialized.append(medicos.serialize())
+    return jsonify(medicos_serialized)
+
+@app.route("/usuarios",methods=["GET"])
+def all_user():
+    all_user=User.query.all()
+    users_serialized=[]
+    for users in all_user:
+        users_serialized.append(users.serialize())
+    return jsonify(users_serialized)
+
+@app.route("/usuario/<int:usuario_id>",methods=["GET"])
+def one_usuario(usuario_id):
+    one=User.query.get(usuario_id)
+    return jsonify(one.serialize())
+
+@app.route("/medico/<int:medico_id>",methods=["GET"])
+def uno_medico(medico_id):
+    uno=Medicos.query.get(medico_id)
+    return jsonify(uno.serialize())
+
+@app.route("/especialidades", methods=['POST'])
+def esp(especialidades_id):
+    espec=Especialidades.query.get(especialidades_id)
+    return jsonify(espec.serialize())
+
+
+
+
+
+
+
 
 
 # this only runs if `$ python src/main.py` is executed
