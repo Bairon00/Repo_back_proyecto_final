@@ -10,6 +10,8 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
 #from models import Person
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+import datetime
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -19,6 +21,7 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+jwt = JWTManager(app)
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -31,14 +34,43 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/user', methods=['GET'])
-def handle_hello():
+def getUser():
+    all_user = User.query.all()
+    serializados = list( map(lambda user: user.serialize(), all_user))
+    print(all_user)
+    return jsonify({
+        "mensaje": "Todos los usuarios",
+        "user": serializados
+    }), 200
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+@app.route('/login', methods=['POST'])
+def login():
+    body = request.get_json()
+    user = User.query.filter_by(email=body['email']).first()
+    if(user):
+        if(user.password== body['password']):
 
-    return jsonify(response_body), 200
 
+            expiracion = datetime.timedelta(minutes=1)
+            token = create_access_token(identity=body['email'], expires_delta= expiracion)
+            return jsonify({
+                "email": body['email'],
+                "mensaje": "Bienvenido",
+                "token": token 
+
+    })
+        else:
+            return jsonify({"mensaje": 'Los datos son incorrectos'})
+    else:
+        return jsonify({"mensaje": 'El usuario no existe'})
+
+@app.route('/private', methods=['GET'])
+@jwt_required()
+def private():
+    identidad = get_jwt_identity()
+    return jsonify({
+        "mensaje": "Bienvenido "+ identidad
+    })
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
