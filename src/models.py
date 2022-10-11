@@ -22,14 +22,17 @@ class User(db.Model):
             "email": self.email
             # do not serialize the password, its a security breach
         }
-class Especialidades():
+class Especialidades(db.Model):
     id=db.Column(db.Integer,primary_key=True)
+    area=db.Column(db.String(100),nullable=False)
     especialidad=db.Column(db.String(100),unique=False,nullable=False)
+
+    
     def __repr__(self):
-        return '<User %r>' % self.especialidades
+        return '<Especialidades %r>' % self.especialidades
     def serialize(self):
         return {
-            "id":self.id,
+            
             "especialidad":self.especialidad
           
         }
