@@ -93,7 +93,7 @@ def add_medico():
     new_medico.email=body["email"]
     new_medico.valor=body["valor"]
     new_medico.imagen=body["imagen"]
-    db.session.add(new_user)
+    db.session.add(new_medico)
     db.session.commit()
     return "medico agregado"
 
@@ -128,8 +128,8 @@ def cambio(user_id):
         user.password=body["password"]
     if "is_active" in body:
         user.is_active=body["is_active"]
-    if "previcion" in body:
-        user.previcion=body["previcion"]
+    if "prevision" in body:
+        user.prevision=body["prevision"]
     db.session.commit()
     return "cambio exitoso"
     
