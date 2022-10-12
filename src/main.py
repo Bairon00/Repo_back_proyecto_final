@@ -128,8 +128,8 @@ def cambio(user_id):
         user.password=body["password"]
     if "is_active" in body:
         user.is_active=body["is_active"]
-    if "prevision" in body:
-        user.prevision=body["prevision"]
+    if "previcion" in body:
+        user.previcion=body["previcion"]
     db.session.commit()
     return "cambio exitoso"
     
