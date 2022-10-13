@@ -128,11 +128,40 @@ def cambio(user_id):
         user.password=body["password"]
     if "is_active" in body:
         user.is_active=body["is_active"]
-    if "previcion" in body:
-        user.previcion=body["previcion"]
+    if "prevision" in body:
+        user.prevision=body["prevision"]
+    if "token" in body:
+        user.token=body["token"]
     db.session.commit()
     return "cambio exitoso"
     
+@app.route("/user/<int:user_id>",methods=["DELETE"])
+def delete_user(user_id):
+    user=User.query.filter_by(id=user_id).first()
+    if(user):
+        db.session.delete(user)
+        db.session.commit()
+        return "User eliminado"
+    else:
+        raise APIException("No existe este usuario",status_code=404)
+@app.route("/medico/<int:medico_id>",methods=["DELETE"])
+def delete_medico(medico_id):
+    medico=Medicos.query.filter_by(id=medico_id).first()
+    if(medico):
+        db.session.delete(medico)
+        db.session.commit()
+        return "Eliminado"
+    else:
+        raise APIException("No existe este medico",status_code=404)
+@app.route("/especialidad/<especialidad>",methods=["DELETE"])
+def delete_esp(especialidad):
+    especialidad=Especialidades.query.filter_by(especialidad=especialidad).first()
+    if(especialidad):
+        db.session.delete(especialidad)
+        db.session.commit()
+        return "especialidad eliminada"
+    else:
+        raise APIException("No existe esta especialidad",status_code=404)
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
