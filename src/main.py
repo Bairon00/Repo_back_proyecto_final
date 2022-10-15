@@ -68,8 +68,16 @@ def one_usuario(usuario_id):
 
 @app.route("/medico/<int:medico_id>",methods=["GET"])
 def one_medico(medico_id):
+
     uno=Medicos.query.get(medico_id)
     return jsonify(uno.serialize())
+
+    one=Medicos.query.get(medico_id)
+    return jsonify(one.serialize())
+
+
+
+
 
 @app.route("/add_user",methods=["POST"])
 def add_user():
