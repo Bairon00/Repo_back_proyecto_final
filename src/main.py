@@ -9,9 +9,12 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User,Medicos,Especialidades
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+import datetime
 #from models import Person
 
 app = Flask(__name__)
+jwt=JWTManager(app)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -65,6 +68,11 @@ def all_especialidades():
 def one_usuario(usuario_id):
     one=User.query.get(usuario_id)
     return jsonify(one.serialize())
+
+@app.route("/logUsuario/<email>",methods=["GET"])
+def log_user(email):
+    log_user=User.query.filter_by(email=email).first()
+    return jsonify(log_user.serialize())
 
 @app.route("/medico/<int:medico_id>",methods=["GET"])
 def one_medico(medico_id):
@@ -170,6 +178,27 @@ def delete_esp(especialidad):
         return "especialidad eliminada"
     else:
         raise APIException("No existe esta especialidad",status_code=404)
+@app.route("/login",methods=["POST"])
+def login():
+    body=request.get_json()
+    user=User.query.filter_by(email=body["email"],password=body["password"]).first()
+    if(user is None):
+        return jsonify({"mensaje":"usuario no existe"})
+    else:
+        expiracion=datetime.timedelta(minutes=1)
+        acceso=create_access_token(identity=body["email"],expires_delta=expiracion)
+        return jsonify({
+            "login":"ok",
+            "token":acceso
+        })
+@app.route("/perfil",methods=["GET"])
+@jwt_required()
+def perfil():
+    identidad=get_jwt_identity()
+    user=User.query.filter_by(email=identidad).first()
+    return jsonify({
+        "user":user.serialize()
+    })
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
