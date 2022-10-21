@@ -54,7 +54,10 @@ class Medicos(db.Model):
     def serialize(self):
         return {
             "name":self.name,
-            "valor":self.valor
+            "valor":self.valor,
+            "especialidad":self.especialidad,
+            "email":self.email,
+            "imagen":self.imagen
         }
 
 
