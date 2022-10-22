@@ -33,9 +33,11 @@ def handle_invalid_usage(error):
 
 # generate sitemap with all your endpoints
 
+
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
+
 
 @app.route('/user', methods=['GET'])
 def getUser():
@@ -47,12 +49,14 @@ def getUser():
         "user": serializados
     }), 200
 
-@app.route("/user/<int:user_id>",methods=["GET"])
+
+@app.route("/user/<int:user_id>", methods=["GET"])
 def one_user(user_id):
     one = User.query.get(user_id)
     return jsonify(one.serialize())
 
-@app.route("/user/<int:user_id>/edit",methods=["PUT"])
+
+@app.route("/user/<int:user_id>/edit", methods=["PUT"])
 def edit(user_id):
     body = request.get_json()
     # coprobar si existe un usuario con mismo correo
@@ -60,10 +64,11 @@ def edit(user_id):
     if (user):
         return jsonify({"mensaje": "El email ya se encuentra en uso, por favor elegir otro."}), 418
     else:
-        edit_user = User(email=body['email'], 
-                          password=body['password'], password_confirm=['password_confirm'], name=body['name'], last_name=body['last_name'], is_active=True)
+        edit_user = User(email=body['email'],
+                         password=body['password'], password_confirm=['password_confirm'], name=body['name'], last_name=body['last_name'], is_active=True)
         db.session.commit()
         return jsonify(body)
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -86,10 +91,12 @@ def login():
     else:
         return jsonify({"mensaje": 'El usuario no existe'})
 
+
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
     session.pop('user', None)
     return jsonify({"mensaje": "Cerraste sesión exitosamente"})
+
 
 @app.route('/private', methods=['GET'])
 @jwt_required()
@@ -99,20 +106,29 @@ def private():
         "mensaje": "Bienvenido " + identidad
     })
 
+
 @app.route('/register', methods=['POST'])
 def register():
     body = request.get_json()
     # coprobar si existe un usuario con mismo correo
     user = User.query.filter_by(email=body['email']).first()
     if (user):
-        return jsonify({"mensaje": "El usuario ya existe"}), 418
+        return jsonify({"mensaje": "El usuario ya existe"}), 403
     else:
-        new_user = User(email=body['email'], 
-                          password=body['password'], name=body['name'], last_name=body['last_name'], is_active=True)
+        new_user = User(email=body['email'],
+                        password=body['password'], name=body['name'], last_name=body['last_name'], prevision=body['prevision'], is_active=True)
         db.session.add(new_user)
         db.session.commit()
-        return jsonify(body), 201  # creado
+        return jsonify({"mensaje": "El usuario ya fue creado"}), 201  # creado
 
+
+@app.route('/user/<int:user_id>/getpassword', methods=['GET'])
+def getpassword(user_id):
+    password = User.query.get(user_id)
+
+    return jsonify(
+                password.serialize_password()
+            )
 
 
 # this only runs if `$ python src/main.py` is executed
