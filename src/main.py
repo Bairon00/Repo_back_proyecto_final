@@ -199,6 +199,24 @@ def perfil():
     return jsonify({
         "user":user.serialize()
     })
+@app.route('/register', methods=['POST'])
+def register():
+    body = request.get_json()
+    # coprobar si existe un usuario con mismo correo
+    user = User.query.filter_by(email=body['email']).first()
+    if (user):
+        return jsonify({"mensaje": "El usuario ya existe"}), 403
+    else:
+        new_user = User(email=body['email'],
+        password=body['password'], 
+        name=body['name'], 
+        last_name=body['last_name'], 
+        prevision=body['prevision'], 
+        is_active=True)
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"mensaje": "El usuario ya fue creado"}), 201  # creado
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
