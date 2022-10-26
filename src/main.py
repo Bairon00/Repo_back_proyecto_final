@@ -65,7 +65,7 @@ def edit(user_id):
         return jsonify({"mensaje": "El email ya se encuentra en uso, por favor elegir otro."}), 418
     else:
         edit_user = User(email=body['email'],
-                         password=body['password'], password_confirm=['password_confirm'], name=body['name'], last_name=body['last_name'], is_active=True)
+                         password=body['password'], name=body['name'], last_name=body['last_name'], prevision=body['prevision'], is_active=True)
         db.session.commit()
         return jsonify(body)
 
