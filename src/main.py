@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+import mercadopago
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -22,6 +23,8 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+sdk = mercadopago.SDK(ACCESS_TOKEN)
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -199,6 +202,29 @@ def perfil():
     return jsonify({
         "user":user.serialize()
     })
+
+@app.route('/api/preference', methods=['POST'])
+def generate_preference():
+
+    name = request.json.get('name')
+    quantity = request.json.get('quantity', 1)
+    valor = request.json.get('valor')
+
+    preference_data = {
+        "items": [
+            {
+                "title": name,
+                "quantity": 1,
+                "unit_price": float(valor)
+            }
+        ]
+    }
+
+    preference_response = sdk.preference().create(preference_data)
+    preference = preference_response["response"]
+
+    return jsonify(preference), 200
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
