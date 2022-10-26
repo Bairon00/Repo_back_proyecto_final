@@ -217,6 +217,12 @@ def register():
         db.session.commit()
         return jsonify({"mensaje": "El usuario ya fue creado"}), 201  # creado
 
+@app.route("/user/<email>", methods=["get"])
+def getpassword(email):
+    usuario = User.query.filter_by(email=email).first()
+    
+    return jsonify(usuario.password)
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
