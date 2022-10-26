@@ -60,14 +60,17 @@ def one_user(user_id):
 def edit(user_id):
     body = request.get_json()
     # coprobar si existe un usuario con mismo correo
-    user = User.query.filter_by(email=body['email']).first()
-    if (user):
-        return jsonify({"mensaje": "El email ya se encuentra en uso, por favor elegir otro."}), 418
+    user = User.query.get(user_id)
+    if (user is None):
+        return jsonify({"mensaje": "El usuario no se encuentra"}), 400
     else:
-        edit_user = User(email=body['email'],
-                         password=body['password'], name=body['name'], last_name=body['last_name'], prevision=body['prevision'], is_active=True)
+        user.email = body["email"]
+        user.password = body["password"]
+        user.name = body["name"]
+        user.last_name = body["last_name"]
+        user.prevision = body["prevision"]
         db.session.commit()
-        return jsonify(body)
+        return jsonify({"mensaje": "El usuario ya fue modificado"}), 201
 
 
 @app.route('/login', methods=['POST'])
@@ -127,8 +130,8 @@ def getpassword(user_id):
     password = User.query.get(user_id)
 
     return jsonify(
-                password.serialize_password()
-            )
+        password.serialize_password()
+    )
 
 
 # this only runs if `$ python src/main.py` is executed
