@@ -217,7 +217,13 @@ def generate_preference():
                 "quantity": 1,
                 "unit_price": float(valor)
             }
-        ]
+        ],
+    
+        "back_urls": {
+        "failure": "",
+        "pending": "",
+        "success": ""
+    },
     }
 
     preference_response = sdk.preference().create(preference_data)
