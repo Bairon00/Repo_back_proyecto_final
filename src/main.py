@@ -62,7 +62,7 @@ def edit(user_id):
     # coprobar si existe un usuario con mismo correo
     user = User.query.get(user_id)
     if (user is None):
-        return jsonify({"mensaje": "El usuario no se encuentra"}), 400
+        return jsonify({"mensaje": "El usuario no se encuentra"}), 401
     else:
         user.email = body["email"]
         user.password = body["password"]
