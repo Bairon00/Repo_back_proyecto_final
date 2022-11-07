@@ -249,6 +249,13 @@ def register():
         db.session.commit()
         return jsonify({"mensaje": "El usuario ya fue creado"}), 201  # creado
 
+
+@app.route("/user/<email>", methods=["get"])
+def getpassword(email):
+    usuario = User.query.filter_by(email=email).first()
+    
+    return jsonify(usuario.password)
+
 @app.route("/user/<int:user_id>/edit", methods=["PUT"])
 def edit(user_id):
     body = request.get_json()
@@ -264,6 +271,7 @@ def edit(user_id):
         user.prevision = body["prevision"]
         db.session.commit()
         return jsonify({"mensaje": "El usuario ya fue modificado"}), 201
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
